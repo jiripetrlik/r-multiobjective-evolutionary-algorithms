@@ -19,3 +19,21 @@ test_that("Test binary chromosome GA using quadratic benchmark", {
   expect_lt(abs(binary_chromosome_to_numeric(results$best_solution[1:16], -10, 10) - 1), 0.1)
   expect_lt(abs(binary_chromosome_to_numeric(results$best_solution[17:32], -10, 10) + 1), 0.1)
 })
+
+test_that("Test numeric chromosome GA using quadratic benchmark", {
+  set.seed(1)
+
+  objective_function <- function(chromosome) {
+    chromosome <- scale_numeric_chromosome(chromosome, -10, 10)
+    x1 <- chromosome[1]
+    x2 <- chromosome[2]
+
+    return(quadratic_benchmark_function(c(x1 - 1, x2 + 1)))
+  }
+
+  results <- single_objective_ga(objective_function, 2, "numeric")
+  expect_true(is.list(results))
+  expect_lt(results$value, 0.01)
+  expect_lt(abs(scale_numeric_chromosome(results$best_solution[1], -10, 10) - 1), 0.1)
+  expect_lt(abs(scale_numeric_chromosome(results$best_solution[2], -10, 10) + 1), 0.1)
+})
