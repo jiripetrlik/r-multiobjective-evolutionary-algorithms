@@ -9,9 +9,11 @@ single_objective_ga <- function(objective_function,
                                 mutation_probability = 0.05,
                                 uniform_mutation_sd = 0.01) {
   if (chromosome_type == "binary") {
-    binary_single_objective_ga(objective_function, chromosome_size, population_size, number_of_iterations, elitism, mutation_probability)
+    binary_single_objective_ga(objective_function, chromosome_size, population_size,
+                               number_of_iterations, elitism, mutation_probability)
   } else if (chromosome_type == "numeric") {
-    numeric_single_objective_ga(objective_function, chromosome_size, population_size, number_of_iterations, elitism, nc, uniform_mutation_sd)
+    numeric_single_objective_ga(objective_function, chromosome_size, population_size,
+                                number_of_iterations, elitism, nc, uniform_mutation_sd)
   } else {
     stop("Unknown chromosome type")
   }
@@ -21,7 +23,7 @@ binary_single_objective_ga <- function(objective_function,
                                        chromosome_size,
                                        population_size,
                                        number_of_iterations,
-                                       elitism = TRUE,
+                                       elitism,
                                        mutation_probability) {
   population <- replicate(population_size, init_binary_chromosome(chromosome_size), simplify = FALSE)
   for (iteration in 1:number_of_iterations) {
@@ -32,7 +34,8 @@ binary_single_objective_ga <- function(objective_function,
       population[[population_size + i * 2]] <- children$child2
     }
     population[(population_size + 1):(2 * population_size)] <- lapply(population[(population_size + 1):(2 * population_size)],
-                                                                      bind_parameters(binaryMutation, probability = mutation_probability))
+                                                                      bind_parameters(
+                                                                        binaryMutation, probability = mutation_probability))
     fitness_values <- sapply(population, objective_function)
     selected <- tournament_selection(fitness_values)
     if (elitism == TRUE) {
@@ -48,6 +51,16 @@ binary_single_objective_ga <- function(objective_function,
   results$best_solution <- population[[best_solution_index]]
   results$best_solution_index <- best_solution_index
 
+  parameters <- list()
+  parameters$objective_function <- objective_function
+  parameters$chromosome_size <- chromosome_size
+  parameters$chromosome_type <- "binary"
+  parameters$population_size <- population_size
+  parameters$number_of_iterations <- number_of_iterations
+  parameters$elitism <- elitism
+  parameters$mutation_probability <- mutation_probability
+  results$parameters <- parameters
+
   return(results)
 }
 
@@ -55,7 +68,7 @@ numeric_single_objective_ga <- function(objective_function,
                                         chromosome_size,
                                         population_size,
                                         number_of_iterations,
-                                        elitism = TRUE,
+                                        elitism,
                                         nc,
                                         uniform_mutation_sd) {
   population <- replicate(population_size, init_numeric_chromosome(chromosome_size), simplify = FALSE)
@@ -67,7 +80,8 @@ numeric_single_objective_ga <- function(objective_function,
       population[[population_size + i * 2]] <- children$child2
     }
     population[(population_size + 1):(2 * population_size)] <- lapply(population[(population_size + 1):(2 * population_size)],
-                                                                      bind_parameters(normally_distributed_mutation, sd = uniform_mutation_sd))
+                                                                      bind_parameters(
+                                                                        normally_distributed_mutation, sd = uniform_mutation_sd))
     fitness_values <- sapply(population, objective_function)
     selected <- tournament_selection(fitness_values)
     if (elitism == TRUE) {
@@ -82,6 +96,18 @@ numeric_single_objective_ga <- function(objective_function,
   results$value <- fitness_values[best_solution_index]
   results$best_solution <- population[[best_solution_index]]
   results$best_solution_index <- best_solution_index
+
+  parameters <- list()
+  parameters$objective_function <- objective_function
+  parameters$chromosome_size <- chromosome_size
+  parameters$chromosome_type <- "numeric"
+  parameters$chromosome_size <- chromosome_size
+  parameters$population_size <- population_size
+  parameters$number_of_iterations <-number_of_iterations
+  parameters$elitism <- elitism
+  parameters$nc <- nc
+  parameters$uniform_mutation_sd <- uniform_mutation_sd
+  results$parameters <- parameters
 
   return(results)
 }

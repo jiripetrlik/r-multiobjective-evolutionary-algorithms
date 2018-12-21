@@ -58,3 +58,82 @@ test_that("Test numeric weighted sum GA", {
   expect_lt(abs(results$weighted_values[1] - 2), 0.1)
   expect_lt(abs(results$weighted_values[2] - 2), 0.1)
 })
+
+test_that("Test binary chromosome weighted sum GA parameters", {
+  f1 <- function(ch) {
+    x <- binary_chromosome_to_numeric(ch[1:16], -10, 10)
+    return((x - 1) ^ 2 + 2)
+  }
+  f2 <- function(ch) {
+    x <- binary_chromosome_to_numeric(ch[17:32], -10, 10)
+    return((x + 1) ^ 2 + 1)
+  }
+  functions <- list(f1, f2)
+  weights <- c(1, 2)
+  chromosome_size <- 32
+  chromosome_type <- "binary"
+  population_size <- 50
+  number_of_iterations <- 10
+  elitism <- FALSE
+  mutation_probability <- 0.1
+
+  results <- weighted_sum_ga(functions,
+                             weights,
+                             chromosome_size = chromosome_size,
+                             chromosome_type = chromosome_type,
+                             population_size = population_size,
+                             number_of_iterations = number_of_iterations,
+                             elitism = elitism,
+                             mutation_probability = mutation_probability);
+
+  expect_true(all(results$parameters$weights == weights))
+  expect_true(is.list(results$parameters$objective_functions_list))
+  expect_length(results$parameters$objective_functions_list, 2)
+  expect_equal(results$parameters$chromosome_size, chromosome_size)
+  expect_equal(results$parameters$chromosome_type, chromosome_type)
+  expect_equal(results$parameters$population_size, population_size)
+  expect_equal(results$parameters$number_of_iterations, number_of_iterations)
+  expect_equal(results$parameters$elitism, elitism)
+  expect_equal(results$parameters$mutation_probability, mutation_probability)
+})
+
+test_that("Test numeric chromosome weighted sum GA parameters", {
+  f1 <- function(ch) {
+    ch <- scale_numeric_chromosome(ch, -10, 10)
+    return((ch[1] - 1) ^ 2 + 2)
+  }
+  f2 <- function(ch) {
+    ch <- scale_numeric_chromosome(ch, -10, 10)
+    return((ch[2] + 1) ^ 2 + 1)
+  }
+  functions <- list(f1, f2)
+  weights <- c(1, 2)
+  chromosome_size <- 2
+  chromosome_type <- "numeric"
+  population_size <- 50
+  number_of_iterations <- 10
+  elitism <- FALSE
+  nc <- 5
+  uniform_mutation_sd <- 0.1
+
+  results <- weighted_sum_ga(functions,
+                             weights,
+                             chromosome_size = chromosome_size,
+                             chromosome_type = chromosome_type,
+                             population_size = population_size,
+                             number_of_iterations = number_of_iterations,
+                             elitism = elitism,
+                             nc = nc,
+                             uniform_mutation_sd = uniform_mutation_sd);
+
+  expect_true(all(results$parameters$weights == weights))
+  expect_true(is.list(results$parameters$objective_functions_list))
+  expect_length(results$parameters$objective_functions_list, 2)
+  expect_equal(results$parameters$chromosome_size, chromosome_size)
+  expect_equal(results$parameters$chromosome_type, chromosome_type)
+  expect_equal(results$parameters$population_size, population_size)
+  expect_equal(results$parameters$number_of_iterations, number_of_iterations)
+  expect_equal(results$parameters$elitism, elitism)
+  expect_equal(results$parameters$nc, nc)
+  expect_equal(results$parameters$uniform_mutation_sd, uniform_mutation_sd)
+})

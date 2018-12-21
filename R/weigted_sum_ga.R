@@ -24,7 +24,12 @@ weighted_sum_ga <- function(objective_functions_list,
                                 nc,
                                 mutation_probability,
                                 uniform_mutation_sd)
+
   results$values <- sapply(objective_functions_list, function(f) { f(results$best_solution) } )
   results$weighted_values <- results$values * weights
+
+  results$parameters$objective_functions_list <- objective_functions_list
+  results$parameters$weights <- weights
+
   return(results)
 }
