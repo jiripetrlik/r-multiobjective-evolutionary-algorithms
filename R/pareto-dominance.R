@@ -10,12 +10,12 @@ pareto_dominates <- function(a, b, minimize = TRUE) {
   if (is.numeric(b) == FALSE) {
     stop("Second parameter must be a numeric value")
   }
-  
+
   if (minimize == FALSE) {
     a <- (-a)
     b <- (-b)
   }
-  
+
   return(pareto_dominates_fast(a, b))
 }
 
@@ -23,7 +23,7 @@ check_objective_vectors_list <- function(l) {
   if (any(sapply(l, function(x) { is.numeric(x) == FALSE } ))) {
     stop("All items in objective vector list must be numeric vectors")
   }
-  
+
   if (length(l) > 0) {
     size  <- length(l[[1]])
     if (all(sapply(l, function(x) { length(x) == size })) == FALSE) {
@@ -48,6 +48,16 @@ find_nondominated_fast <- function(solutions, minimize) {
 
 #' @export
 find_nondominated <- function(solutions, minimize = TRUE) {
-  check_objective_vectors_list(solutions)
-  return(find_nondominated_fast(solutions, minimize))
+  if (is.list(solutions)) {
+    check_objective_vectors_list(solutions)
+    return(find_nondominated_fast(solutions, minimize))
+  } else if(is.matrix(solutions)) {
+    number_of_solutions <- nrow(solutions)
+    objective_functions_number <- ncol(solutions)
+    solutions <- t(solutions)
+    solutions <- split(as.vector(solutions), rep(1:number_of_solutions, each = objective_functions_number))
+    return(find_nondominated_fast(solutions, minimize))
+  } else {
+    stop("Parameter solutions must be list or matrix")
+  }
 }
