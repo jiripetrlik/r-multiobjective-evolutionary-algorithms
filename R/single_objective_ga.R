@@ -26,6 +26,7 @@ binary_single_objective_ga <- function(objective_function,
                                        elitism,
                                        mutation_probability) {
   population <- replicate(population_size, init_binary_chromosome(chromosome_size), simplify = FALSE)
+  statistics <- list(min_fitness = numeric(), max_fitness = numeric(), mean_fitness = numeric(), sd_fitness = numeric())
   for (iteration in 1:number_of_iterations) {
     for (i in 1:(population_size / 2)) {
       parents <- random_integer(1, population_size, 2)
@@ -42,14 +43,20 @@ binary_single_objective_ga <- function(objective_function,
       selected[1] <- which.min(fitness_values)
     }
     population <- population[selected]
+    fitness_values <-fitness_values[selected]
+
+    statistics$min_fitness <- c(statistics$min_fitness, min(fitness_values))
+    statistics$max_fitness <- c(statistics$max_fitness, max(fitness_values))
+    statistics$mean_fitness <- c(statistics$mean_fitness, mean(fitness_values))
+    statistics$sd_fitness <- c(statistics$sd_fitness, sd(fitness_values))
   }
-  fitness_values <-fitness_values[selected]
   best_solution_index <- which.min(fitness_values)
 
   results <- list()
   results$value <- fitness_values[best_solution_index]
   results$best_solution <- population[[best_solution_index]]
   results$best_solution_index <- best_solution_index
+  results$statistics <- statistics
 
   parameters <- list()
   parameters$objective_function <- objective_function
@@ -72,6 +79,7 @@ numeric_single_objective_ga <- function(objective_function,
                                         nc,
                                         uniform_mutation_sd) {
   population <- replicate(population_size, init_numeric_chromosome(chromosome_size), simplify = FALSE)
+  statistics <- list(min_fitness = numeric(), max_fitness = numeric(), mean_fitness = numeric(), sd_fitness = numeric())
   for (iteration in 1:number_of_iterations) {
     for (i in 1:(population_size / 2)) {
       parents <- random_integer(1, population_size, 2)
@@ -88,14 +96,20 @@ numeric_single_objective_ga <- function(objective_function,
       selected[1] <- which.min(fitness_values)
     }
     population <- population[selected]
+    fitness_values <-fitness_values[selected]
+
+    statistics$min_fitness <- c(statistics$min_fitness, min(fitness_values))
+    statistics$max_fitness <- c(statistics$max_fitness, max(fitness_values))
+    statistics$mean_fitness <- c(statistics$mean_fitness, mean(fitness_values))
+    statistics$sd_fitness <- c(statistics$sd_fitness, sd(fitness_values))
   }
-  fitness_values <-fitness_values[selected]
   best_solution_index <- which.min(fitness_values)
 
   results <- list()
   results$value <- fitness_values[best_solution_index]
   results$best_solution <- population[[best_solution_index]]
   results$best_solution_index <- best_solution_index
+  results$statistics <- statistics
 
   parameters <- list()
   parameters$objective_function <- objective_function

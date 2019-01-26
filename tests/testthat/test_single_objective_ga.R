@@ -18,6 +18,11 @@ test_that("Test binary chromosome GA using quadratic benchmark", {
   expect_lt(results$value, 0.01)
   expect_lt(abs(binary_chromosome_to_numeric(results$best_solution[1:16], -10, 10) - 1), 0.1)
   expect_lt(abs(binary_chromosome_to_numeric(results$best_solution[17:32], -10, 10) + 1), 0.1)
+
+  expect_length(results$statistics$min_fitness, 100)
+  expect_length(results$statistics$max_fitness, 100)
+  expect_length(results$statistics$mean_fitness, 100)
+  expect_length(results$statistics$sd_fitness, 100)
 })
 
 test_that("Test numeric chromosome GA using quadratic benchmark", {
@@ -36,6 +41,11 @@ test_that("Test numeric chromosome GA using quadratic benchmark", {
   expect_lt(results$value, 0.01)
   expect_lt(abs(scale_numeric_chromosome(results$best_solution[1], -10, 10) - 1), 0.1)
   expect_lt(abs(scale_numeric_chromosome(results$best_solution[2], -10, 10) + 1), 0.1)
+
+  expect_length(results$statistics$min_fitness, 100)
+  expect_length(results$statistics$max_fitness, 100)
+  expect_length(results$statistics$mean_fitness, 100)
+  expect_length(results$statistics$sd_fitness, 100)
 })
 
 test_that("Test binary single objective GA parameters", {
