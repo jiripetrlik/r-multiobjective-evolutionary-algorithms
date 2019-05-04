@@ -30,3 +30,28 @@ nondominated_sort <- function(objective_functions_values) {
 
   return(solution_rank)
 }
+
+crowding_distance_assignment <- function(objective_functions_values) {
+  number_of_solutions <- nrow(objective_functions_values)
+  if (number_of_solutions <= 2) {
+    return(rep(Inf, number_of_solutions))
+  }
+
+  number_of_objectives <- ncol(objective_functions_values)
+  distance <- rep(0, number_of_solutions)
+
+  for (i in 1:number_of_objectives) {
+    ord <- order(objective_functions_values[, i])
+    rk <- rank(objective_functions_values[, i], ties.method = "first")
+    values <- objective_functions_values[ord, i]
+    minimum <- min(values)
+    maximum <- max(values)
+    r <- maximum - minimum
+
+    tmpDistance <- (values[3:length(values)] - values[1:(length(values) - 2)]) / r
+    tmpDistance <- c(Inf, tmpDistance, Inf)
+    distance <- distance + tmpDistance[rk]
+  }
+
+  return(distance)
+}
