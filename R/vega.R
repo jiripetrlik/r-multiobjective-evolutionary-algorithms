@@ -2,7 +2,7 @@
 vega <- function(objective_functions_list,
                  chromosome_size,
                  chromosome_type = "binary",
-                 population_size = length(objective_functions_list) * 100,
+                 population_size = length(objective_functions_list) * 40,
                  number_of_iterations = 100,
                  nc = 2,
                  mutation_probability = 0.05,
