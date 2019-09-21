@@ -1,3 +1,30 @@
+#' Single objective genetic algorithm
+#'
+#' Use single objective genetic algorithm to find an optimum for
+#' the specified objective function. Candidate solutions are represented
+#' as logical or numeric vectors.
+#' @param objective_function Objective function
+#' @param chromosome_size Size of chromosome which represents candidate solutions
+#' @param chromosome_type Chromosome type ("binary" or "numeric")
+#' @param population_size Number of solutions evaluated in one iteration of genetic algorithm
+#' @param number_of_iterations Number of iterations (generations) of genetic algorithm
+#' @param elitism Use elitism
+#' @param nc NC for SBX crossover (valid if "numeric" chromosome is used)
+#' @param mutation_probability Probability of mutation (valid if "binary" chromosome is used)
+#' @param uniform_mutation_sd Standard deviation of mutation (valid if "numeric" chromosome is used)
+#'
+#' @return List which contains results of single objective genetic algorithm:
+#'
+#' \code{value} - Value of objective function for the best solution
+#'
+#' \code{best_solution} - Chromosome which represents the best solution
+#'
+#' \code{best_solution_index} - Index of the best solution in population
+#'
+#' \code{statistics} - Statistics about run of genetic algorithm
+#'
+#' \code{parameters} - Parameters of genetic algorithm
+#'
 #' @export
 single_objective_ga <- function(objective_function,
                                 chromosome_size,
