@@ -2,6 +2,19 @@ pareto_dominates_fast <- function(a, b) {
   return(all(a <= b) && any(a < b))
 }
 
+#' Check pareto dominance
+#'
+#' Check whether solution \code{a} dominates solution \code{b}
+#' @param a Numeric vector with values of objective functions for solution \code{a}
+#' @param b Numeric vector with values of objective functions for solution \code{b}
+#' @param minimize If objective functions should be minimized
+#' @return Logical value
+#'
+#' @examples
+#' solutionA <- c(1,2,2)
+#' solutionB <- c(5,2,2)
+#' pareto_dominates(solutionA, solutionB)
+#'
 #' @export
 pareto_dominates <- function(a, b, minimize = TRUE) {
   if (is.numeric(a) == FALSE) {
@@ -36,6 +49,20 @@ is_nondominated_fast <- function(x, solutions, minimize) {
   return(any(sapply(solutions, function(s) { pareto_dominates(s, x, minimize) })) == FALSE)
 }
 
+#' Check if solution in nondominated
+#'
+#' Check if solution \code{x} is not dominated by any other solution in the set \code{solutions}
+#' @param x Numeric vector with objective functions values for solution \code{x}
+#' @param solutions List or matrix with objective functions values for \code{solutions}.
+#' In matrix each row contains values for one solution
+#' @param minimize If objective functions should be minimized
+#' @return Logical value
+#'
+#' @examples
+#' x <- c(1, 2, 2)
+#' solutions <- list(c(1, 5, 5), c(8, 4, 8), c(3, 2, 2))
+#' is_nondominated(x, solutions)
+#'
 #' @export
 is_nondominated <- function(x, solutions, minimize = TRUE) {
   check_objective_vectors_list(solutions)
@@ -46,6 +73,19 @@ find_nondominated_fast <- function(solutions, minimize) {
   return(sapply(solutions, function(s) {is_nondominated(s, solutions, minimize)}))
 }
 
+#' Find nondominated solutions
+#'
+#' Find solutions which are not dominated by any other solution
+#' @param solutions List or matrix with objective functions values for \code{solutions}.
+#' In matrix each row contains values for one solution
+#' @param minimize If objective functions should be minimized
+#' @return Logical vector with the same length as number of solutions. Vector contains
+#' TRUE for solutions which are nondominated.
+#'
+#' @examples
+#' solutions <- list(c(1, 5, 5), c(8, 4, 8), c(3, 2, 2))
+#' find_nondominated(solutions)
+#'
 #' @export
 find_nondominated <- function(solutions, minimize = TRUE) {
   if (is.list(solutions)) {
