@@ -34,6 +34,21 @@ normally_distributed_mutation <- function(chromosome, sd = 0.01) {
   return(chromosome)
 }
 
+#' Scale values of numeric chromosome to the specified range
+#'
+#' Scale values of numeric chromosome to the specified range. Numeric chromosome
+#' is a numeric vector with values within [0, 1].
+#' @param chromosome Numeric chromosome
+#' @param min Minimal value(s) which item in chromosome can represent
+#' @param max Maximal value(s) which item in chromosome can represent
+#' @return Numeric vector with converted chromosme values
+#'
+#' @examples
+#' # Generate numeric chromosome with 10 items
+#' chromosome <- runif(10)
+#' # Scale values of numeric chromosome to [-5, 5]
+#' scale_numeric_chromosome(chromosome, -5, 5)
+#'
 #' @export
 scale_numeric_chromosome <- function(chromosome, min = 0, max = 1) {
   return(chromosome * (max - min) + min)

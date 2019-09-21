@@ -42,6 +42,20 @@ binaryMutation <- function(parent, probability = 0.05) {
   return(child)
 }
 
+#' Convert binary chromosome to numeric value
+#'
+#' Convert binary chromosome to numeric value.
+#' @param chromosome Binary chromosome
+#' @param min Minimal value which chromosome can represent
+#' @param max Maximal value which chromosome can represent
+#' @return Numeric value within the range specified by \code{min}, \code{max}
+#'
+#' @examples
+#' # Generate a random 24 bit chromosome
+#' chromosome <- sample(c(TRUE, FALSE), 24, TRUE)
+#' Convert the chromosome to a numeric value within the range [-10, 10]
+#' binary_chromosome_to_numeric(chromosome, -10, 10)
+#'
 #' @export
 binary_chromosome_to_numeric <- function(chromosome, min = 0, max = 1) {
   int_value <- sum(as.integer(chromosome) * 2 ^ seq(0, length(chromosome) -1))
