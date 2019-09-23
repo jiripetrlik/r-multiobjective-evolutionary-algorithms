@@ -3,6 +3,40 @@ weighted_sum_function <- function(chromosome, functions, weights) {
   return(sum(weights * values))
 }
 
+#' Weighted sum genetic algorithm
+#' 
+#' Use weighted sum approach to solve multiobjective optimization problem.
+#' Weighted sum approach transforms multiobjective optimization problem
+#' to single objective by multiplying objective functions values by weights.
+#' Then genetic algorithm is used to find optimal solution.
+#' @param objective_functions_list List of objective functions
+#' @param weights Objective functions weights
+#' @param chromosome_size Size of chromosome which represents candidate solutions
+#' @param chromosome_type Chromosome type ("binary" or "numeric")
+#' @param population_size Number of solutions evaluated in one iteration of genetic algorithm
+#' @param number_of_iterations Number of iterations (generations) of genetic algorithm
+#' @param elitism Use elitism
+#' @param nc NC for SBX crossover (valid if "numeric" chromosome is used)
+#' @param mutation_probability Probability of mutation (valid if "binary" chromosome is used)
+#' @param uniform_mutation_sd Standard deviation of mutation (valid if "numeric" chromosome is used)
+#' 
+#' @return List which contains results of weighted sum genetic algorithm:
+#' 
+#' \code{value} - Sum of weighted objective funtions values for the best solution
+#'
+#' \code{best_solution} - Chromosome which represents the best solution
+#'
+#' \code{best_solution_index} - Index of the best solution in population
+#'
+#' \code{statistics} - Statistics about run of genetic algorithm
+#'
+#' \code{parameters} - Parameters of genetic algorithm
+#' 
+#' \code{values} - Values of objective functions for the best solution
+#' 
+#' \code{weighted_values} - Values of objective functions multiplied by
+#' weights for the best solution
+#' 
 #' @export
 weighted_sum_ga <- function(objective_functions_list,
                                 weights,
