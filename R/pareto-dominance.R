@@ -32,6 +32,12 @@ pareto_dominates <- function(a, b, minimize = TRUE) {
   return(pareto_dominates_fast(a, b))
 }
 
+convert_objective_matrix_to_list <- function(m) {
+  l <- split(t(m), rep(1:nrow(m), each=ncol(m)))
+  
+  return(l)
+}
+
 check_objective_vectors_list <- function(l) {
   if (any(sapply(l, function(x) { is.numeric(x) == FALSE } ))) {
     stop("All items in objective vector list must be numeric vectors")
@@ -65,6 +71,10 @@ is_nondominated_fast <- function(x, solutions, minimize) {
 #'
 #' @export
 is_nondominated <- function(x, solutions, minimize = TRUE) {
+  if (is.matrix(solutions)) {
+    solutions <- convert_objective_matrix_to_list(solutions)
+  }
+  
   check_objective_vectors_list(solutions)
   return(is_nondominated_fast(x, solutions, minimize))
 }
@@ -88,6 +98,10 @@ find_nondominated_fast <- function(solutions, minimize) {
 #'
 #' @export
 find_nondominated <- function(solutions, minimize = TRUE) {
+  if (is.matrix(solutions)) {
+    solutions <- convert_objective_matrix_to_list(solutions)
+  }
+  
   if (is.list(solutions)) {
     check_objective_vectors_list(solutions)
     return(find_nondominated_fast(solutions, minimize))

@@ -39,6 +39,16 @@ test_that("Test Pareto dominance relation (maximize)", {
   expect_true(pareto_dominates(a, b, minimize = FALSE))
 })
 
+test_that("Test convert_objective_matrix_to_list function", {
+  m <- matrix(c(1,2,3,4,5,6), nrow = 2, byrow = T)
+  l <- convert_objective_matrix_to_list(m)
+  expect_length(l, 2)
+  expect_length(l[[1]], 3)
+  expect_length(l[[2]], 3)
+  expect_true(all(l[[1]] == c(1, 2, 3)))
+  expect_true(all(l[[2]] == c(4, 5, 6)))
+})
+
 test_that("Test check objective vectors list (positive scenario)", {
   l <- list()
   l[[1]] <- c(1, 5, 8, 3)
