@@ -1,3 +1,27 @@
+#' Vector Evaluated Genetic Algorithm
+#' 
+#' Use Vector Evaluated Genetic Algorithm to solve the multiobjective optimization
+#' problem.
+#' @param objective_functions_list List of objective functions
+#' @param chromosome_size Size of chromosome which represents candidate solutions
+#' @param chromosome_type Chromosome type ("binary" or "numeric")
+#' @param population_size Number of solutions evaluated in one iteration of genetic algorithm
+#' @param number_of_iterations Number of iterations (generations) of genetic algorithm
+#' @param nc NC for SBX crossover (valid if "numeric" chromosome is used)
+#' @param mutation_probability Probability of mutation (valid if "binary" chromosome is used)
+#' @param uniform_mutation_sd Standard deviation of mutation (valid if "numeric" chromosome is used)
+#' 
+#' @return List which contains results of Vector Evaluated Genetic Algorithm:
+#' 
+#' \code{values} - Matrix with objective functions values for nondominated solutions.
+#' Each row represents one nondominated solution and each column one objective function.
+#' 
+#' \code{nondominated_solutions} - Chromosomes of nondominated solutions
+#' 
+#' \code{statistics} - Statistics about run of genetic algorithm
+#'
+#' \code{parameters} - Parameters of genetic algorithm
+#' 
 #' @export
 vega <- function(objective_functions_list,
                  chromosome_size,
