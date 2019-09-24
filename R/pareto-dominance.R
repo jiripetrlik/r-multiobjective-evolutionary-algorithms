@@ -55,7 +55,7 @@ is_nondominated_fast <- function(x, solutions, minimize) {
   return(any(sapply(solutions, function(s) { pareto_dominates(s, x, minimize) })) == FALSE)
 }
 
-#' Check if solution in nondominated
+#' Check if solution is nondominated
 #'
 #' Check if solution \code{x} is not dominated by any other solution in the set \code{solutions}
 #' @param x Numeric vector with objective functions values for solution \code{x}

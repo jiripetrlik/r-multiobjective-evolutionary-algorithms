@@ -2,7 +2,7 @@
 % Please edit documentation in R/pareto-dominance.R
 \name{is_nondominated}
 \alias{is_nondominated}
-\title{Check if solution in nondominated}
+\title{Check if solution is nondominated}
 \usage{
 is_nondominated(x, solutions, minimize = TRUE)
 }
