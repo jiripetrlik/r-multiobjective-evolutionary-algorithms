@@ -67,6 +67,29 @@ evaluate_objective_functions <- function(solutions, objective_functions_list) {
   return(objective_functions_values)
 }
 
+#' NSGAII algorithm
+#'
+#' Use NSGAII algorithm to solve the multiobjective optimization problem.
+#' @param objective_functions_list List of objective functions
+#' @param chromosome_size Size of chromosome which represents candidate solutions
+#' @param chromosome_type Chromosome type ("binary" or "numeric")
+#' @param population_size Number of solutions evaluated in one iteration of genetic algorithm
+#' @param number_of_iterations Number of iterations (generations) of genetic algorithm
+#' @param nc NC for SBX crossover (valid if "numeric" chromosome is used)
+#' @param mutation_probability Probability of mutation (valid if "binary" chromosome is used)
+#' @param uniform_mutation_sd Standard deviation of mutation (valid if "numeric" chromosome is used)
+#'
+#' @return List which contains results of NSGAII:
+#'
+#' \code{values} - Matrix with objective functions values for nondominated solutions.
+#' Each row represents one nondominated solution and each column one objective function.
+#'
+#' \code{nondominated_solutions} - Chromosomes of nondominated solutions
+#'
+#' \code{statistics} - Statistics about run of genetic algorithm
+#'
+#' \code{parameters} - Parameters of genetic algorithm
+#'
 #' @export
 nsga2 <- function(objective_functions_list,
                   chromosome_size,
@@ -109,7 +132,7 @@ binary_nsga2 <- function(objective_functions_list,
     statistics$mean_fitness[[i]] <- numeric()
     statistics$sd_fitness[[i]] <- numeric()
   }
-  
+
   for (iteration in 1:number_of_iterations) {
     q <- list()
     for (i in 1:(population_size / 2)) {
@@ -122,7 +145,7 @@ binary_nsga2 <- function(objective_functions_list,
 
     # Evaluate objective functions for Q
     q_objective_functions_values <- evaluate_objective_functions(q, objective_functions_list)
-    
+
     pq <- c(p, q)
     objective_functions_values <- rbind(p_objective_functions_values, q_objective_functions_values)
     r <- nondominated_sort(objective_functions_values)
@@ -130,23 +153,23 @@ binary_nsga2 <- function(objective_functions_list,
     r <- r[o]
     pq <- pq[o]
     objective_functions_values <- objective_functions_values[o,]
-    
+
     if (r[population_size] == r[population_size + 1]) {
       fi_r <- r[population_size]
       fi <- which(r == fi_r)
       cda <- crowding_distance_assignment(objective_functions_values[fi,])
       o_fi <- fi[order(cda, decreasing = TRUE)]
-      
+
       fi_from <- min(fi)
       fi_to <- max(fi)
       r[fi_from : fi_to] <- r[o_fi]
       pq[fi_from : fi_to] <- pq[o_fi]
       objective_functions_values[fi_from : fi_to,] <- objective_functions_values[o_fi,]
     }
-    
+
     p <- pq[1 : population_size]
     p_objective_functions_values <- objective_functions_values[1 : population_size,]
-    
+
     for (i in 1:number_of_objective_functions) {
       statistics$min_fitness[[i]] <- c(statistics$min_fitness[[i]], min(p_objective_functions_values[, i]))
       statistics$max_fitness[[i]] <- c(statistics$max_fitness[[i]], max(p_objective_functions_values[, i]))
@@ -154,13 +177,13 @@ binary_nsga2 <- function(objective_functions_list,
       statistics$sd_fitness[[i]] <- c(statistics$sd_fitness[[i]], sd(p_objective_functions_values[, i]))
     }
   }
-  
+
   nondominated <- find_nondominated(p_objective_functions_values)
   results <- list()
   results$values <- p_objective_functions_values[nondominated,]
   results$nondominated_solutions <- p[nondominated]
   results$statistics <- statistics
-  
+
   parameters <- list()
   parameters$objective_functions_list <- objective_functions_list
   parameters$chromosome_type <- "binary"
@@ -169,7 +192,7 @@ binary_nsga2 <- function(objective_functions_list,
   parameters$number_of_iterations <- number_of_iterations
   parameters$mutation_probability <- mutation_probability
   results$parameters <- parameters
-  
+
   return(results)
 }
 
@@ -189,7 +212,7 @@ numeric_nsga2 <- function(objective_functions_list,
     statistics$mean_fitness[[i]] <- numeric()
     statistics$sd_fitness[[i]] <- numeric()
   }
-  
+
   for (iteration in 1:number_of_iterations) {
     q <- list()
     for (i in 1:(population_size / 2)) {
@@ -200,10 +223,10 @@ numeric_nsga2 <- function(objective_functions_list,
     }
     q[1:population_size] <- lapply(q[1:population_size], bind_parameters(
       normally_distributed_mutation, sd = uniform_mutation_sd))
-    
+
     # Evaluate objective functions for Q
     q_objective_functions_values <- evaluate_objective_functions(q, objective_functions_list)
-    
+
     pq <- c(p, q)
     objective_functions_values <- rbind(p_objective_functions_values, q_objective_functions_values)
     r <- nondominated_sort(objective_functions_values)
@@ -211,23 +234,23 @@ numeric_nsga2 <- function(objective_functions_list,
     r <- r[o]
     pq <- pq[o]
     objective_functions_values <- objective_functions_values[o,]
-    
+
     if (r[population_size] == r[population_size + 1]) {
       fi_r <- r[population_size]
       fi <- which(r == fi_r)
       cda <- crowding_distance_assignment(objective_functions_values[fi,])
       o_fi <- fi[order(cda, decreasing = TRUE)]
-      
+
       fi_from <- min(fi)
       fi_to <- max(fi)
       r[fi_from : fi_to] <- r[o_fi]
       pq[fi_from : fi_to] <- pq[o_fi]
       objective_functions_values[fi_from : fi_to,] <- objective_functions_values[o_fi,]
     }
-    
+
     p <- pq[1 : population_size]
     p_objective_functions_values <- objective_functions_values[1 : population_size,]
-    
+
     for (i in 1:number_of_objective_functions) {
       statistics$min_fitness[[i]] <- c(statistics$min_fitness[[i]], min(p_objective_functions_values[, i]))
       statistics$max_fitness[[i]] <- c(statistics$max_fitness[[i]], max(p_objective_functions_values[, i]))
@@ -235,13 +258,13 @@ numeric_nsga2 <- function(objective_functions_list,
       statistics$sd_fitness[[i]] <- c(statistics$sd_fitness[[i]], sd(p_objective_functions_values[, i]))
     }
   }
-  
+
   nondominated <- find_nondominated(p_objective_functions_values)
   results <- list()
   results$values <- p_objective_functions_values[nondominated,]
   results$nondominated_solutions <- p[nondominated]
   results$statistics <- statistics
-  
+
   parameters <- list()
   parameters$objective_functions_list <- objective_functions_list
   parameters$chromosome_type <- "numeric"
@@ -251,6 +274,6 @@ numeric_nsga2 <- function(objective_functions_list,
   parameters$nc <- nc
   parameters$uniform_mutation_sd <- uniform_mutation_sd
   results$parameters <- parameters
-  
+
   return(results)
 }
