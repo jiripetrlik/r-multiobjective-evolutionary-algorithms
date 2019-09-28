@@ -3,6 +3,13 @@ quadratic_benchmark_function <- function(x) {
   return(sum(x^2))
 }
 
+#' Fonseca-Fleming benchmark function
+#'
+#' Fonseca-Fleming benchmark function. For more info see
+#' \url{https://en.wikipedia.org/wiki/Test_functions_for_optimization}.
+#' @param v Vector with input parameters
+#' @return Vector with two objective functions values
+#'
 #' @export
 fonseca_fleming_function <- function(v) {
   n <- 1:length(v)
@@ -12,6 +19,13 @@ fonseca_fleming_function <- function(v) {
   return(c(value1, value2))
 }
 
+#' Kursawe benchmark function
+#'
+#' Kursawe benchmark function. For more info see
+#' \url{https://en.wikipedia.org/wiki/Test_functions_for_optimization}.
+#' @param v Vector with input parameters
+#' @return Vector with two objective functions values
+#'
 #' @export
 kursawe_function <- function(v) {
   if (length(v) != 3) {
@@ -26,6 +40,13 @@ kursawe_function <- function(v) {
   return(c(value1, value2))
 }
 
+#' Schaffer function 1.
+#'
+#' Schaffer benchmark function 1. For more info see
+#' \url{https://en.wikipedia.org/wiki/Test_functions_for_optimization}.
+#' @param v Vector with input parameters
+#' @return Vector with two objective functions values
+#'
 #' @export
 schaffer_function <- function(x) {
   if (length(x) != 1) {
