@@ -25,7 +25,7 @@ test_that("Test binary weighted sum GA", {
   functions <- list(f1, f2)
   weights <- c(1, 2)
 
-  results <- weighted_sum_ga(functions, weights, 32, "binary")
+  results <- weighted_sum_ga(functions, weights, "binary", nBits = 32)
 
   expect_lt(abs(results$value - 4), 0.1)
   expect_lt(abs(binary_chromosome_to_numeric(results$best_solution[1:16], -10, 10) - 1), 0.1)
@@ -36,23 +36,21 @@ test_that("Test binary weighted sum GA", {
   expect_lt(abs(results$weighted_values[2] - 2), 0.1)
 })
 
-test_that("Test numeric weighted sum GA", {
+test_that("Test real-valued weighted sum GA", {
   f1 <- function(ch) {
-    ch <- scale_numeric_chromosome(ch, -10, 10)
     return((ch[1] - 1) ^ 2 + 2)
   }
   f2 <- function(ch) {
-    ch <- scale_numeric_chromosome(ch, -10, 10)
     return((ch[2] + 1) ^ 2 + 1)
   }
   functions <- list(f1, f2)
   weights <- c(1, 2)
 
-  results <- weighted_sum_ga(functions, weights, 2, "numeric")
+  results <- weighted_sum_ga(functions, weights, "real-valued", lower = c(-10, -10), upper = c(10, 10))
 
   expect_lt(abs(results$value - 4), 0.1)
-  expect_lt(abs(scale_numeric_chromosome(results$best_solution[1], -10, 10) - 1), 0.1)
-  expect_lt(abs(scale_numeric_chromosome(results$best_solution[2], -10, 10) + 1), 0.1)
+  expect_lt(abs(results$best_solution[1] - 1), 0.1)
+  expect_lt(abs(results$best_solution[2] + 1), 0.1)
   expect_lt(abs(results$values[1] - 2), 0.1)
   expect_lt(abs(results$values[2] - 1), 0.1)
   expect_lt(abs(results$weighted_values[1] - 2), 0.1)
@@ -70,7 +68,7 @@ test_that("Test binary chromosome weighted sum GA parameters", {
   }
   functions <- list(f1, f2)
   weights <- c(1, 2)
-  chromosome_size <- 32
+  nBits <- 32
   chromosome_type <- "binary"
   population_size <- 50
   number_of_iterations <- 10
@@ -79,8 +77,8 @@ test_that("Test binary chromosome weighted sum GA parameters", {
 
   results <- weighted_sum_ga(functions,
                              weights,
-                             chromosome_size = chromosome_size,
                              chromosome_type = chromosome_type,
+                             nBits = nBits,
                              population_size = population_size,
                              number_of_iterations = number_of_iterations,
                              elitism = elitism,
@@ -89,7 +87,7 @@ test_that("Test binary chromosome weighted sum GA parameters", {
   expect_true(all(results$parameters$weights == weights))
   expect_true(is.list(results$parameters$objective_functions_list))
   expect_length(results$parameters$objective_functions_list, 2)
-  expect_equal(results$parameters$chromosome_size, chromosome_size)
+  expect_equal(results$parameters$nBits, nBits)
   expect_equal(results$parameters$chromosome_type, chromosome_type)
   expect_equal(results$parameters$population_size, population_size)
   expect_equal(results$parameters$number_of_iterations, number_of_iterations)
@@ -99,17 +97,17 @@ test_that("Test binary chromosome weighted sum GA parameters", {
 
 test_that("Test numeric chromosome weighted sum GA parameters", {
   f1 <- function(ch) {
-    ch <- scale_numeric_chromosome(ch, -10, 10)
     return((ch[1] - 1) ^ 2 + 2)
   }
   f2 <- function(ch) {
-    ch <- scale_numeric_chromosome(ch, -10, 10)
     return((ch[2] + 1) ^ 2 + 1)
   }
   functions <- list(f1, f2)
   weights <- c(1, 2)
+  lower <- c(-10, -10)
+  upper <- c(10, 10)
   chromosome_size <- 2
-  chromosome_type <- "numeric"
+  chromosome_type <- "real-valued"
   population_size <- 50
   number_of_iterations <- 10
   elitism <- FALSE
@@ -118,8 +116,9 @@ test_that("Test numeric chromosome weighted sum GA parameters", {
 
   results <- weighted_sum_ga(functions,
                              weights,
-                             chromosome_size = chromosome_size,
                              chromosome_type = chromosome_type,
+                             lower = lower,
+                             upper = upper,
                              population_size = population_size,
                              number_of_iterations = number_of_iterations,
                              elitism = elitism,
@@ -129,7 +128,8 @@ test_that("Test numeric chromosome weighted sum GA parameters", {
   expect_true(all(results$parameters$weights == weights))
   expect_true(is.list(results$parameters$objective_functions_list))
   expect_length(results$parameters$objective_functions_list, 2)
-  expect_equal(results$parameters$chromosome_size, chromosome_size)
+  expect_equal(results$parameters$lower, lower)
+  expect_equal(results$parameters$upper, upper)
   expect_equal(results$parameters$chromosome_type, chromosome_type)
   expect_equal(results$parameters$population_size, population_size)
   expect_equal(results$parameters$number_of_iterations, number_of_iterations)
