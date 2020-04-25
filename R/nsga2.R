@@ -71,8 +71,10 @@ evaluate_objective_functions <- function(solutions, objective_functions_list) {
 #'
 #' Use NSGAII algorithm to solve the multiobjective optimization problem.
 #' @param objective_functions_list List of objective functions
-#' @param chromosome_size Size of chromosome which represents candidate solutions
-#' @param chromosome_type Chromosome type ("binary" or "numeric")
+#' @param chromosome_type Chromosome type ("binary" or "real-valued")
+#' @param lower Lower bounds of the search space in case of real-valued GA
+#' @param upper Upper bounds of the search space in case of real-valued GA
+#' @param nBits Number of bits in binary chromosome
 #' @param population_size Number of solutions evaluated in one iteration of genetic algorithm
 #' @param number_of_iterations Number of iterations (generations) of genetic algorithm
 #' @param nc NC for SBX crossover (valid if "numeric" chromosome is used)
@@ -92,22 +94,25 @@ evaluate_objective_functions <- function(solutions, objective_functions_list) {
 #'
 #' @export
 nsga2 <- function(objective_functions_list,
-                  chromosome_size,
-                  chromosome_type = "binary",
+                  chromosome_type,
+                  lower = numeric(),
+                  upper = numeric(),
+                  nBits = 0,
                   population_size = length(objective_functions_list) * 40,
                   number_of_iterations = 100,
                   nc = 2,
                   mutation_probability = 0.05,
-                  uniform_mutation_sd = 0.01) {
+                  uniform_mutation_sd = 0.1) {
   if (chromosome_type == "binary") {
     binary_nsga2(objective_functions_list = objective_functions_list,
-                 chromosome_size = chromosome_size,
+                 nBits = nBits,
                  population_size = population_size,
                  number_of_iterations = number_of_iterations,
                  mutation_probability = mutation_probability)
-  } else if (chromosome_type == "numeric") {
+  } else if (chromosome_type == "real-valued") {
     numeric_nsga2(objective_functions_list = objective_functions_list,
-                 chromosome_size = chromosome_size,
+                 lower = lower,
+                 upper = upper,
                  population_size = population_size,
                  number_of_iterations = number_of_iterations,
                  nc = nc,
@@ -118,12 +123,12 @@ nsga2 <- function(objective_functions_list,
 }
 
 binary_nsga2 <- function(objective_functions_list,
-                         chromosome_size,
+                         nBits,
                          population_size,
                          number_of_iterations,
                          mutation_probability = 0.05) {
   number_of_objective_functions <- length(objective_functions_list)
-  p <- replicate(population_size, init_binary_chromosome(chromosome_size), simplify = FALSE)
+  p <- replicate(population_size, init_binary_chromosome(nBits), simplify = FALSE)
   p_objective_functions_values <- evaluate_objective_functions(p, objective_functions_list)
   statistics <- list(min_fitness = list(), max_fitness = list(), mean_fitness = list(), sd_fitness = list())
   for (i in 1:number_of_objective_functions) {
@@ -187,7 +192,7 @@ binary_nsga2 <- function(objective_functions_list,
   parameters <- list()
   parameters$objective_functions_list <- objective_functions_list
   parameters$chromosome_type <- "binary"
-  parameters$chromosome_size <- chromosome_size
+  parameters$nBits <- nBits
   parameters$population_size <- population_size
   parameters$number_of_iterations <- number_of_iterations
   parameters$mutation_probability <- mutation_probability
@@ -197,13 +202,18 @@ binary_nsga2 <- function(objective_functions_list,
 }
 
 numeric_nsga2 <- function(objective_functions_list,
-                         chromosome_size,
+                         lower,
+                         upper,
                          population_size,
                          number_of_iterations,
                          nc,
                          uniform_mutation_sd) {
+  if (length(lower) != length(upper)) {
+    stop("Size of lower and upper differ")
+  }
+
   number_of_objective_functions <- length(objective_functions_list)
-  p <- replicate(population_size, init_numeric_chromosome(chromosome_size), simplify = FALSE)
+  p <- replicate(population_size, init_numeric_chromosome_2(lower, upper), simplify = FALSE)
   p_objective_functions_values <- evaluate_objective_functions(p, objective_functions_list)
   statistics <- list(min_fitness = list(), max_fitness = list(), mean_fitness = list(), sd_fitness = list())
   for (i in 1:number_of_objective_functions) {
@@ -217,12 +227,12 @@ numeric_nsga2 <- function(objective_functions_list,
     q <- list()
     for (i in 1:(population_size / 2)) {
       parents <- random_integer(1, population_size, 2)
-      children <- simulated_binary_crossover(p[[parents[1]]], p[[parents[2]]], nc)
+      children <- simulated_binary_crossover(p[[parents[1]]], p[[parents[2]]], nc, lower = lower, upper = upper)
       q[[i * 2 - 1]] <- children$child1
       q[[i * 2]] <- children$child2
     }
     q[1:population_size] <- lapply(q[1:population_size], bind_parameters(
-      normally_distributed_mutation, sd = uniform_mutation_sd))
+      normally_distributed_mutation, sd = uniform_mutation_sd, lower = lower, upper = upper))
 
     # Evaluate objective functions for Q
     q_objective_functions_values <- evaluate_objective_functions(q, objective_functions_list)
@@ -267,8 +277,9 @@ numeric_nsga2 <- function(objective_functions_list,
 
   parameters <- list()
   parameters$objective_functions_list <- objective_functions_list
-  parameters$chromosome_type <- "numeric"
-  parameters$chromosome_size <- chromosome_size
+  parameters$chromosome_type <- "real-valued"
+  parameters$lower <- lower
+  parameters$upper <- upper
   parameters$population_size <- population_size
   parameters$number_of_iterations <- number_of_iterations
   parameters$nc <- nc
