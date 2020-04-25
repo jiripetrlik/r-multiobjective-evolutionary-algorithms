@@ -38,7 +38,7 @@ single_objective_ga <- function(objective_function,
                                 elitism = TRUE,
                                 nc = 2,
                                 mutation_probability = 0.05,
-                                uniform_mutation_sd = 0.01) {
+                                uniform_mutation_sd = 0.1) {
   if (chromosome_type == "binary") {
     binary_single_objective_ga(objective_function, nBits, population_size,
                                number_of_iterations, elitism, mutation_probability)
@@ -128,7 +128,6 @@ real_valued_single_objective_ga <- function(objective_function,
                                                                       bind_parameters(
                                                                         normally_distributed_mutation, sd = uniform_mutation_sd,
                                                                         lower = lower, upper = upper))
-    #population_parameters <- sapply(population, scale_numeric_chromosome, lower = lower, upper = upper, simplify = FALSE)
     fitness_values <- sapply(population, objective_function)
     selected <- tournament_selection(fitness_values)
     if (elitism == TRUE) {

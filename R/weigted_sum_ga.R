@@ -52,7 +52,7 @@ weighted_sum_ga <- function(objective_functions_list,
                                 elitism = TRUE,
                                 nc = 2,
                                 mutation_probability = 0.05,
-                                uniform_mutation_sd = 0.01) {
+                                uniform_mutation_sd = 0.1) {
   objective_function <- bind_parameters(weighted_sum_function, functions = objective_functions_list, weights = weights)
   results <- single_objective_ga(objective_function,
                                 chromosome_type,
