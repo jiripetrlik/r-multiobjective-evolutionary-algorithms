@@ -213,7 +213,7 @@ numeric_nsga2 <- function(objective_functions_list,
   }
 
   number_of_objective_functions <- length(objective_functions_list)
-  p <- replicate(population_size, init_numeric_chromosome_2(lower, upper), simplify = FALSE)
+  p <- replicate(population_size, init_numeric_chromosome(lower, upper), simplify = FALSE)
   p_objective_functions_values <- evaluate_objective_functions(p, objective_functions_list)
   statistics <- list(min_fitness = list(), max_fitness = list(), mean_fitness = list(), sd_fitness = list())
   for (i in 1:number_of_objective_functions) {

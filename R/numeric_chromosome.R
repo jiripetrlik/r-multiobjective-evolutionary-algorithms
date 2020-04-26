@@ -1,8 +1,4 @@
-init_numeric_chromosome <- function(size) {
-  return(runif(size))
-}
-
-init_numeric_chromosome_2 <- function(lower, upper) {
+init_numeric_chromosome <- function(lower, upper) {
   return(runif(length(lower), lower, upper))
 }
 

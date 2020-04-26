@@ -149,7 +149,7 @@ numeric_vega <- function(objective_functions_list,
 
   number_of_objective_functions <- length(objective_functions_list)
   subpopulation_size <- (population_size / number_of_objective_functions) * 2
-  population <- replicate(population_size, init_numeric_chromosome_2(lower, upper), simplify = FALSE)
+  population <- replicate(population_size, init_numeric_chromosome(lower, upper), simplify = FALSE)
   statistics <- list(min_fitness = list(), max_fitness = list(), mean_fitness = list(), sd_fitness = list())
   for (i in 1:number_of_objective_functions) {
     statistics$min_fitness[[i]] <- numeric()

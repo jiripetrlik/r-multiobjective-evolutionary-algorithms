@@ -115,7 +115,7 @@ real_valued_single_objective_ga <- function(objective_function,
   }
   chromosome_size <- length(lower)
 
-  population <- replicate(population_size, init_numeric_chromosome_2(lower, upper), simplify = FALSE)
+  population <- replicate(population_size, init_numeric_chromosome(lower, upper), simplify = FALSE)
   statistics <- list(min_fitness = numeric(), max_fitness = numeric(), mean_fitness = numeric(), sd_fitness = numeric())
   for (iteration in 1:number_of_iterations) {
     for (i in 1:(population_size / 2)) {
